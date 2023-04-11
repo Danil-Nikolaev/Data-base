@@ -71,8 +71,8 @@ def generate_filials(faker: Faker):
         address = faker.address()
         phone = faker.phone_number()
         email = faker.ascii_free_email()
-        cursor.execute(f"""INSERT INTO Filials (filial_id, title, address, phone, email)
-                          VALUES ({id}, {title}, {address}, {phone}, {email})
+        cursor.execute(f"""INSERT INTO "Filials" (filial_id, title, address, phone, email)
+                          VALUES ({id}, '{title}', '{address}', '{phone}', '{email}')
                         """)
         connection.commit()
 
@@ -148,7 +148,8 @@ def main():
     # generate_workers(faker)
     # generate_services(faker)
     # generate_rates()
-    generate_services_in_rates()
+    # generate_services_in_rates()
+    generate_filials(faker)
 
 if __name__ == "__main__":
     main()
