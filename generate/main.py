@@ -81,8 +81,9 @@ def generate_services_in_rates():
     for i in range(100):
         id = i + 1
         rate_id = random.randint(1,5)
-        service_id = random.randint(1,100)
-        cursor.execute(f"INSERT INTO Services_in_rates (id, rate_id, service_id) VALUES ({id}, {rate_id}, {service_id})")
+        service_id = random.randint(1,99)
+        cursor.execute(f"""INSERT INTO "Services_in_rates" (id, rate_id, service_id) 
+                       VALUES ({id}, {rate_id}, {service_id})""")
         connection.commit()
         
 
@@ -146,7 +147,8 @@ def main():
     faker = Faker(locale='ru_RU')
     # generate_workers(faker)
     # generate_services(faker)
-    generate_rates()
+    # generate_rates()
+    generate_services_in_rates()
 
 if __name__ == "__main__":
     main()
