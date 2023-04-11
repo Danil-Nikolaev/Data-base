@@ -136,14 +136,14 @@ def generate_workers(faker: Faker):
         phone = faker.phone_number()
         email = faker.ascii_free_email()
         address = faker.address()
-        cursor.execute(f"""INSERT INTO Workers (worker_id, name, post, phone, email, address) 
-                           VALUES ({id}, {name}, {post}, {phone}, {email}, {address})
+        cursor.execute(f"""INSERT INTO "Workers" (worker_id, name, post, phone, email, address) 
+                           VALUES ({id}, '{name}', '{post}', '{phone}', '{email}', '{address}')
                        """)
         connection.commit()
 
 
 def main():
-    faker = Faker()
+    faker = Faker(locale='ru_RU')
     generate_workers(faker)
 
 if __name__ == "__main__":
