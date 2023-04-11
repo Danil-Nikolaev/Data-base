@@ -98,8 +98,8 @@ def generate_rates():
         description = value
         price = prices[index]
         index += 1
-        cursor.execute(f""" INSERT INTO Rates (rate_id, title, description, price)
-                           VALUES ({id}, {title}, {description}, {price})
+        cursor.execute(f""" INSERT INTO "Rates" (rate_id, title, description, price)
+                           VALUES ({id}, '{title}', '{description}', '{price}')
                         """)
         connection.commit()
 
@@ -145,7 +145,8 @@ def generate_workers(faker: Faker):
 def main():
     faker = Faker(locale='ru_RU')
     # generate_workers(faker)
-    generate_services(faker)
+    # generate_services(faker)
+    generate_rates()
 
 if __name__ == "__main__":
     main()
