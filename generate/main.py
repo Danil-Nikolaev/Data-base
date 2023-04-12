@@ -58,8 +58,8 @@ def generate_clients(faker: Faker):
         gender = random.choice(("Man", "Woman"))
         phone = faker.phone_number()
         email = faker.ascii_free_email()
-        cursor.execute(f"""INSERT INTO Clients (client_id, name, birthday, gender, phone, email)
-                          VALUES ({id}, {name}, {birthday}, {gender}, {phone}, {email})
+        cursor.execute(f"""INSERT INTO "Clients" (client_id, name, birthday, gender, phone, email)
+                          VALUES ({id}, '{name}', '{birthday}', '{gender}', '{phone}', '{email}')
                         """)
         connection.commit()
 
@@ -149,7 +149,8 @@ def main():
     # generate_services(faker)
     # generate_rates()
     # generate_services_in_rates()
-    generate_filials(faker)
+    # generate_filials(faker)
+    generate_clients(faker)
 
 if __name__ == "__main__":
     main()
