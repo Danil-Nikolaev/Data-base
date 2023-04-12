@@ -34,18 +34,18 @@ def generate_rooms(faker:Faker):
     является количество спальных мест. Также если номер не занят,
     то поле client_id будет пустым
     """
-    set_level_room = {"Эконом", "Полулюкс", "Люкс", "Презедентский", "Дом"}
+    set_level_room = ("Эконом", "Полулюкс", "Люкс", "Презедентский", "Дом")
     for i in range(1000):
         id = i + 1
         type_number = random.choice(set_level_room)
         number = id
-        busy = random.choice({True, False})
+        busy = random.choice((True, False))
         if busy:
             client_id = random.randint(1, 10_000_000)
         else:
-            client_id = None
-        cursor.execute(f"""INSERT INTO Rooms (room_id, number, type_number, busy, client_id)
-                          VALUES ({id}, {number}, {type_number}, {busy}, {client_id})
+            client_id = "NULL"
+        cursor.execute(f"""INSERT INTO "Rooms" (room_id, number, type_number, busy, client_id)
+                          VALUES ({id}, {number}, '{type_number}', {busy}, {client_id})
                         """)
         connection.commit()
 
@@ -150,7 +150,8 @@ def main():
     # generate_rates()
     # generate_services_in_rates()
     # generate_filials(faker)
-    generate_clients(faker)
+    # generate_clients(faker)
+    generate_rooms(faker)
 
 if __name__ == "__main__":
     main()
