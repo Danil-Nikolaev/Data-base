@@ -14,18 +14,42 @@ cursor = connection.cursor()
 
 
 def generate_bookings(faker: Faker):
-    for i in range(100_000):
-        id = i + 1
-        client_id = random.randint(1, 10_000_000)
-        filial_id = random.randint(1,200)
-        rates_id = random.randint(1,5)
-        cursor.execute("""
-                        SELECT room_id 
-                        FROM Rooms
-                        WHERE Rooms.busy is False
+
+    cursor.execute("""
+                       SELECT room_id 
+                       FROM "Rooms"
+                       WHERE "Rooms".busy is False;
                        """)
-        not_busy_room = random.choice(cursor.fetchall())
-        room_id = not_busy_room[0]
+    not_busy_room = cursor.fetchall()
+    count_not_busy_room = len(not_busy_room)
+
+    cursor.execute("""
+        SELECT cl.client_id
+        FROM "Clients" cl
+        WHERE NOT EXISTS (SELECT
+		        		  FROM "Rooms"
+				          WHERE client_id = cl.client_id);
+    """)
+
+    not_busy_clients = cursor.fetchall()
+    count_not_busy_clients = len(not_busy_clients)
+
+    for i in range(10_000):
+        id = i + 1
+        client = not_busy_clients[random.randint(1, count_not_busy_clients - 1)]
+        client_id = client[0]
+        filial_id = random.randint(1,200)
+        rate_id = random.randint(1,5)
+        room = not_busy_room[random.randint(1, count_not_busy_room - 1)]
+        room_id = room[0]
+        arrival_date = faker.date_between(start_date="today", end_date="+10y")
+        departue_date = faker.date_between(start_date=arrival_date, end_date="+10y")
+
+        cursor.execute(f"""INSERT INTO "Bookings" (booking, client_id, filial_id, arrival_date, departue_date, room_id, rate_id)
+                          VALUES ({id}, {client_id}, {filial_id}, '{arrival_date}', '{departue_date}', {room_id}, {rate_id})
+                        """)
+        connection.commit()
+        
 
 
 def generate_rooms(faker:Faker):
@@ -151,7 +175,8 @@ def main():
     # generate_services_in_rates()
     # generate_filials(faker)
     # generate_clients(faker)
-    generate_rooms(faker)
+    # generate_rooms(faker)
+    generate_bookings(faker)
 
 if __name__ == "__main__":
     main()
