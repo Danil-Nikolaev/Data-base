@@ -1,0 +1,22 @@
+.south-nav {
+    height: 70px;
+}
+
+.nav-active {
+    color: #d69d5a;
+}
+
+.nav-active:hover{
+    color: #d69d5a;
+}
+.south-link {
+    font-size: 16px;
+}
+
+.south-link:hover {
+    color: #d69d5a;
+}
+
+.south-brand {
+    font-size: 25px;
+}
