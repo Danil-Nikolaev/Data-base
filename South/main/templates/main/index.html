@@ -1,0 +1,35 @@
+{% extends 'main/base.html' %}
+{% load static %}
+{% block content %}
+<section class="welcome">
+	<div class="container">
+		<div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+			<div class="carousel-inner">
+			  <div class="carousel-item active">
+				<img src="{% static 'main/images/hotel_1.jpg' %}" class="d-block w-100" alt="...">
+			  </div>
+			  <div class="carousel-item">
+				<img src="{% static 'main/images/hotel_2.jpg' %}" class="d-block w-100" alt="...">
+			  </div>
+			  <div class="carousel-item">
+				<img src="{% static 'main/images/hotel_3.jpg' %}" class="d-block w-100" alt="...">
+			  </div>
+			</div>
+			<button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+			  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+			  <span class="visually-hidden">Предыдущий</span>
+			</button>
+			<button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+			  <span class="carousel-control-next-icon" aria-hidden="true"></span>
+			  <span class="visually-hidden">Следующий</span>
+			</button>
+		  </div>
+		<h1 class="welcome-title">
+			LuxStar Hotel & Resort
+		</h1>
+		<p class="welcome-description">
+			if you chose to stay with us you will enjoy modern home comforts in a traditional settings
+		</p>
+	</div>
+</section>
+{% endblock %}

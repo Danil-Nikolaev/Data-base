@@ -1,0 +1,24 @@
+<!DOCTYPE html> 
+<html lang="en"> 
+<head> 
+<meta charset="UTF-8"> 
+<title>login</title> 
+{% load static %} 
+<link href="{% static 'main/css/bootstrap.min.css' %}" rel="stylesheet"> 
+<link href="{% static 'main/css/normalize.css' %}" rel="stylesheet">
+<link href="{% static 'main/css/style.css' %}" rel="stylesheet">
+<script src="{% static 'main/js/bootstrap.min.js' %}"></script> 
+</head> 
+<body> 
+    {% block navigation %}
+        {% include 'main/_header.html' %}
+    {% endblock %} 
+
+    {% block content %}
+
+    {% endblock %}
+
+    {% block footer %}
+        {% include 'main/_footer.html' %}
+    {% endblock %}
+</body>
