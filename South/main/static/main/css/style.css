@@ -20,3 +20,131 @@
 .south-brand {
     font-size: 25px;
 }
+
+.welcome-container {
+    height: 800px;
+}
+
+.welcome-title {
+    color: #ffffff;
+    font-size: 65px;
+    line-height: 75px;
+    font-weight: 700;
+}
+
+.welcome-description {
+    color: #ffffff;
+    font-size: 18px;
+    line-height: 31px;
+    margin: 15px 0px 15px 0px;
+    font-weight: 400;
+    max-width: 400px;
+}
+
+
+.rooms-title {
+    font-size: 60px;
+    font-weight: 500;
+    margin-top: 0px;
+    padding-top: 50px;
+    color: #000; 
+    text-align: center;
+}
+
+.rooms-description {
+    font-size: 18px;
+    color: #000;
+    text-align: center;
+    max-width: 500px;
+}
+
+.rates-title{
+    font-size: 60px;
+    font-weight: 500;
+    margin-top: 0px;
+    padding-top: 50px;
+    color: #000; 
+    text-align: center;
+}
+
+.rates-description{
+    font-size: 18px;
+    color: #000;
+    text-align: center;
+    max-width: 500px;
+}
+
+.south-card {
+    margin-top: 25px;
+    background-size: cover;
+    width: 500px;
+    height: 300px;
+    
+}
+
+.blur-1{
+    background-image: url('../images/room_1.jpg');
+    background-size: cover;
+    position: absolute;
+    width: 500px;
+    height: 300px;
+    filter:blur(3px);
+    z-index:98;
+}
+
+.blur-2{
+    background-image: url('../images/room_2.jpg');
+    background-size: cover;
+    position: absolute;
+    width: 500px;
+    height: 300px;
+    filter:blur(3px);
+    z-index:98;
+}
+
+.blur-3{
+    background-image: url('../images/room_3.jpg');
+    background-size: cover;
+    position: absolute;
+    width: 500px;
+    height: 300px;
+    filter:blur(3px);
+    z-index:98;
+}
+
+.blur-4{
+    background-image: url('../images/room_4.jpg');
+    background-size: cover;
+    position: absolute;
+    width: 500px;
+    height: 300px;
+    filter:blur(3px);
+    z-index:98;
+}
+
+.rooms-list-title{
+    padding-top: 25px;
+    text-align: center;
+    color: #000;
+    font-size: 35px;
+    font-weight: 600;
+}
+.rooms-list-description{
+    text-align: center;
+    color: #000;
+    font-size: 18px;
+    
+}
+
+.rooms-list-content {
+    width: 400px;
+    height: 250px;
+    z-index: 100;
+    position: relative;
+}
+
+.welcome {
+    height: 980px;
+    background-image: url('../images/hotel_1.jpg');
+    background-size: cover;
+}

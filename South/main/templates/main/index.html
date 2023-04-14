@@ -1,35 +1,162 @@
 {% extends 'main/base.html' %}
 {% load static %}
 {% block content %}
-<section class="welcome">
-	<div class="container">
-		<div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
-			<div class="carousel-inner">
-			  <div class="carousel-item active">
-				<img src="{% static 'main/images/hotel_1.jpg' %}" class="d-block w-100" alt="...">
-			  </div>
-			  <div class="carousel-item">
-				<img src="{% static 'main/images/hotel_2.jpg' %}" class="d-block w-100" alt="...">
-			  </div>
-			  <div class="carousel-item">
-				<img src="{% static 'main/images/hotel_3.jpg' %}" class="d-block w-100" alt="...">
-			  </div>
-			</div>
-			<button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
-			  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-			  <span class="visually-hidden">Предыдущий</span>
-			</button>
-			<button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
-			  <span class="carousel-control-next-icon" aria-hidden="true"></span>
-			  <span class="visually-hidden">Следующий</span>
-			</button>
-		  </div>
-		<h1 class="welcome-title">
-			LuxStar Hotel & Resort
-		</h1>
-		<p class="welcome-description">
-			if you chose to stay with us you will enjoy modern home comforts in a traditional settings
-		</p>
+<section class="welcome" id="welcome">
+	<div class="container welcome-container d-flex align-items-center">
+		<div class="welcome-content">
+			<h1 class="welcome-title">
+				LuxStar Hotel & Resort
+			</h1>
+			<p class="welcome-description">
+				if you chose to stay with us you will enjoy modern home comforts in a traditional settings
+			</p>
+		</div>
 	</div>
 </section>
+<section class="rooms">
+	<div class="container">
+		<div class="rooms-content">
+			<h1 class="rooms-title">Номера</h1>
+			<p class="rooms-description mx-auto">
+				Во всех наших комфортабельных номерах присутствует: телевизор, бесплатный wi-fi, балкон.
+				У нас есть несколько видов номеров нижу указаны 4 основных.
+			</p>
+		</div>
+		<div class="row d-flex justify-content-center">
+			<div class="col-6">
+				<div class="south-card south-card-1 mx-auto">
+					<div class="blur-1"></div>
+					<div class="rooms-list-content mx-auto">
+						<h1 class="rooms-list-title">Эконом</h1>
+						<p class="rooms-list-description">
+							это тип номера, который обычно предназначен для тех, кто ищет доступное и удобное жилье. 
+							Эконом-номера обычно имеют базовые удобства, такие как кровать, телевизор, рабочий стол и ванная комната с душем
+						</p>
+					</div>
+				</div>
+			</div>
+			<div class="col-6">
+				<div class="south-card south-card-2 mx-auto">
+					<div class="blur-2"></div>
+					<div class="rooms-list-content mx-auto">
+						<h1 class="rooms-list-title">Полулюкс</h1>
+						<p class="rooms-list-description">
+							это тип номера, который предлагает более роскошное жилье, чем эконом-номера. 
+							Полулюкс-номера обычно имеют большую площадь, чем эконом-номера, и могут предлагать 
+							дополнительные удобства, такие как отдельная спальня и гостиная зона.
+						</p>
+					</div>
+				</div>
+			</div>
+			<div class="col-6">
+				<div class="south-card south-card-3 mx-auto">
+					<div class="blur-3"></div>
+					<div class="rooms-list-content mx-auto">
+						<h1 class="rooms-list-title">Дом</h1>
+						<p class="rooms-list-description">
+							это тип номера, который предлагает гостям полную приватность и независимость. 
+							Дома могут быть разных размеров и уровней комфорта, но обычно они предлагают гостям большое пространство, 
+							полностью оборудованную кухню, отдельную спальню и гостиную зону.
+						</p>
+					</div>
+				</div>
+			</div>
+			<div class="col-6">
+				<div class="south-card south-card-4 mx-auto">
+					<div class="blur-4"></div>
+					<div class="rooms-list-content mx-auto">
+						<h1 class="rooms-list-title">Президентский</h1>
+						<p class="rooms-list-description">
+							это номер класса люкс, который обычно предназначен для гостей, ищущих высокий уровень комфорта и роскоши. 
+							Этот номер обычно имеет большую площадь и включает в себя отдельную гостиную, спальню и ванную комнату. 
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<section class="rates">
+	<div class="container">
+		<div class="rates-content">
+			<h1 class="rates-title">Тарифы</h1>
+			<p class="rates-description mx-auto">
+				Мы предлагаем несколько видов тарифов, чтобы удовлетворить потребности разных гостей. В стоимость тарифа входит проживание, 
+				трехразовое питание и лечение, которое включает в себя использование бассейнов, саун, грязелечение и другие процедуры. 
+			</p>
+		</div>
+		<div class="row">
+			<div class="col-6">
+				<div class="card mb-3" style="max-width: 540px;">
+				<div class="row g-0">
+					<div class="col-md-4">
+					<img src="{% static 'main/images/rate_1.jpg' %}" class="img-fluid rounded-start" alt="...">
+					</div>
+					<div class="col-md-8">
+					<div class="card-body">
+						<h5 class="card-title">Здоровье и Релакс</h5>
+						<p class="card-text">тариф для любителей спокойного отдыха и оздоровления. 
+							Включает в себя проживание в комфортабельном номере, трехразовое питание, 
+							посещение бассейна и сауны, консультации врача-терапевта и массажиста
+						</p>
+					</div>
+					</div>
+				</div>
+				</div>
+			</div>
+			<div class="col-6">
+				<div class="card mb-3" style="max-width: 540px;">
+				<div class="row g-0">
+					<div class="col-md-4">
+					<img src="{% static 'main/images/rate_2.jpg' %}" class="img-fluid rounded-start" alt="...">
+					</div>
+					<div class="col-md-8">
+					<div class="card-body">
+						<h5 class="card-title">Активный отдых</h5>
+						<p class="card-text">
+							тариф для любителей активного отдыха и занятий спортом. Включает в себя проживание в номере с видом на горы или лес, 
+							трехразовое питание, посещение тренажерного зала, бассейна и спортивных площадок, индивидуальные занятия с инструктором.
+						</p>
+					</div>
+					</div>
+				</div>
+				</div>
+			</div>
+			<div class="col-6">
+				<div class="card mb-3" style="max-width: 540px;">
+				<div class="row g-0">
+					<div class="col-md-4">
+					<img src="{% static 'main/images/rate_3.jpg' %}" class="img-fluid rounded-start" alt="...">
+					</div>
+					<div class="col-md-8">
+					<div class="card-body">
+						<h5 class="card-title">Детский отдых</h5>
+						<p class="card-text">
+							
+						</p>
+					</div>
+					</div>
+				</div>
+				</div>
+			</div>
+			<div class="col-6">
+				<div class="card mb-3" style="max-width: 540px;">
+				<div class="row g-0">
+					<div class="col-md-4">
+					<img src="{% static 'main/images/rate-4.jpg'%}" class="img-fluid rounded-start" alt="...">
+					</div>
+					<div class="col-md-8">
+					<div class="card-body">
+						<h5 class="card-title">Медицинский отдых</h5>
+						<p class="card-text">Это более широкая карта с вспомогательным текстом ниже в качестве естественного перехода к дополнительному контенту. Этот контент немного длиннее.</p>
+					</div>
+					</div>
+				</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
 {% endblock %}
