@@ -146,5 +146,5 @@
 .welcome {
     height: 980px;
     background-image: url('../images/hotel_1.jpg');
-    background-size: cover;
+    background-size: cover; 
 }
