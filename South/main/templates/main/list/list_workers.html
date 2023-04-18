@@ -1,0 +1,41 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+
+<section class="list-model">
+    <div class="container">
+        <table class="table">
+            <tr>
+            {% for field in name_fields %}
+                <th style="text-align: center;">
+                    {{field}}
+                </th>
+            {% endfor %}
+            </tr>
+            {% for model in models %}
+            <tr>
+                <td style="text-align: center;">
+                    {{model.worker_id}}
+                </td>
+                <td style="text-align: center;">
+                    {{model.name}}
+                </td>
+                <td>
+                    {{model.post}}
+                </td>
+                <td>
+                    {{model.phone}}
+                </td>
+                <td>
+                    {{model.email}}
+                </td>
+                <td>
+                    {{model.address}}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</section>
+
+{% endblock %}

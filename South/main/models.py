@@ -69,6 +69,10 @@ class Rates(models.Model):
         db_table = 'Rates'
 
 
+    def __str__(self) -> str:
+        return self.title
+
+
 class Rooms(models.Model):
     room_id = models.IntegerField(primary_key=True)
     number = models.IntegerField(blank=True, null=True)

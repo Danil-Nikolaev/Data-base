@@ -1,0 +1,44 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+
+<section class="list-model">
+    <div class="container">
+        <table class="table">
+            <tr>
+            {% for field in name_fields %}
+                <th style="text-align: center;">
+                    {{field}}
+                </th>
+            {% endfor %}
+            </tr>
+            {% for model in models %}
+            <tr>
+                <td style="text-align: center;">
+                    {{model.booking}}
+                </td>
+                <td style="text-align: center;">
+                    {{model.client}}
+                </td>
+                <td>
+                    {{model.filial}}
+                </td>
+                <td>
+                    {{model.arrival_date}}
+                </td>
+                <td>
+                    {{model.departue_date}}
+                </td>
+                <td>
+                    {{model.room}}
+                </td>
+                <td>
+                    {{model.rate}}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</section>
+
+{% endblock %}
