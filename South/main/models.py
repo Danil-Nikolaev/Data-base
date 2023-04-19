@@ -20,6 +20,9 @@ class Bookings(models.Model):
     class Meta:
         managed = False
         db_table = 'Bookings'
+    
+    def __str__(self) -> str:
+        return self.booking
 
 
 class Clients(models.Model):
@@ -33,6 +36,10 @@ class Clients(models.Model):
     class Meta:
         managed = False
         db_table = 'Clients'
+    
+
+    def __str__(self) -> str:
+        return self.name
 
 
 class Comments(models.Model):
@@ -56,6 +63,10 @@ class Filials(models.Model):
     class Meta:
         managed = False
         db_table = 'Filials'
+
+
+    def __str__(self) -> str:
+        return self.title
 
 
 class Rates(models.Model):
@@ -83,6 +94,9 @@ class Rooms(models.Model):
     class Meta:
         managed = False
         db_table = 'Rooms'
+    
+    def __str__(self) -> str:
+        return self.number
 
 
 class Services(models.Model):
@@ -94,6 +108,10 @@ class Services(models.Model):
     class Meta:
         managed = False
         db_table = 'Services'
+    
+    
+    def __str__(self) -> str:
+        return self.title
 
 
 class ServicesInRates(models.Model):
@@ -117,4 +135,8 @@ class Workers(models.Model):
     class Meta:
         managed = False
         db_table = 'Workers'
+    
+
+    def __str__(self) -> str:
+        return self.name
 
