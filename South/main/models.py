@@ -6,6 +6,7 @@
 #   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
+from django.db import connection
 
 
 class Bookings(models.Model):
@@ -97,6 +98,18 @@ class Rooms(models.Model):
     
     def __str__(self) -> str:
         return self.number
+
+
+    def occupancy_rate(self):
+        with connection.cursor() as curscor:
+            occupancy = curscor.execute('''SELECT (
+                                        (SELECT count(*) 
+                                        FROM "Rooms" 
+                                        WHERE busy = true) 
+                                * 100) / COUNT(*) AS occupancy_rate 
+                                FROM "Rooms";'''
+                            )
+        return occupancy
 
 
 class Services(models.Model):
