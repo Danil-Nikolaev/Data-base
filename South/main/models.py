@@ -9,6 +9,143 @@ from django.db import models
 from django.db import connection
 
 
+
+class LocalSqlQueries:
+
+    """
+    Класс с сырыми sql заросами
+    """
+
+    def occupancy_rate(self):
+        """
+        Процент заполнености номеров
+        """
+        with connection.cursor() as curscor:
+            curscor.execute('''
+                            SELECT (
+                            (SELECT count(*) 
+                            FROM "Rooms" 
+                            WHERE busy = true) 
+                            * 100) / COUNT(*) AS occupancy_rate 
+                            FROM "Rooms";
+                            ''')
+        return curscor.fetchone()
+    
+
+    def  get_birthday_tommorow(self):
+        """
+        Возвращает у кого завтра день рождение
+        и в каком номере
+        """
+        with connection.cursor() as cursor:
+            cursor.execute('''
+                    SELECT B.name, "Rooms".number
+                    FROM (SELECT "Clients".client_id, "Clients".name
+                    FROM "Clients"
+                    where (date_part('month',"Clients".birthday) = date_part('month' ,CURRENT_DATE)) 
+                    and (date_part('day',"Clients".birthday) > date_part('day' ,CURRENT_DATE))
+                    and ((date_part('day',"Clients".birthday) - date_part('day' ,CURRENT_DATE)) < 2)
+                ) AS B
+                JOIN "Rooms" ON B.client_id = "Rooms".client_id
+            ''')
+        return cursor.fetchall()
+    
+
+    def get_popular_filial_type(self):
+        """
+        Возвращает какой филиал, берет чаще всего тип номера,
+        который ввели
+        """
+        with connection.cursor() as cursor:
+            cursor.execute('''
+            select "Filials".title, B.count
+            from (
+	            select "Bookings".filial_id, count("Bookings".filial_id) as count
+	            FROM (
+                    select "Rooms".room_id
+		            FROM "Rooms"
+		            WHERE "Rooms". type_number = 'Эконом'
+                ) as R
+	            join "Bookings" ON R.room_id = "Bookings".room_id
+	            GROUP BY "Bookings".filial_id
+	            ORDER BY count("Bookings".filial_id) DESC
+	            LIMIT 1
+	        ) as B
+            join "Filials" ON "Filials".filial_id = B.filial_id
+            ''')
+
+        return cursor.fetchone()
+    
+
+    def popular_type_rooms(self):
+        """
+        Возвращает самый популярный тип номера
+        """
+        with connection.cursor() as cursor:
+            cursor.execute('''
+                SELECT type_number, COUNT(*) AS count 
+                FROM "Rooms" 
+                GROUP BY type_number 
+                ORDER BY count DESC 
+                LIMIT 1;
+                ''')
+        
+        return cursor.fetchone()
+    
+
+    def popular_rates(self):
+        """
+        Возвращает самый популярный тариф
+        """
+        with connection.cursor() as cursor:
+            cursor.execute('''
+            SELECT title, COUNT(*) AS count 
+            FROM "Rates" 
+            JOIN "Bookings" 
+            ON "Rates".rate_id = "Bookings".rate_id 
+            GROUP BY title
+            ORDER BY count DESC 
+            LIMIT 1;
+            ''')
+        
+        return cursor.fetchone()
+    
+    
+    def unpopular_filial(self):
+        """
+        Возвращает самый не популярный филиал
+        """
+        with connection.cursor() as cursor:
+            cursor.connection('''
+            SELECT title, COUNT(*) AS count 
+            FROM "Filials"
+            JOIN "Bookings" 
+            ON "Filials".filial_id = "Bookings".filial_id
+            GROUP BY title
+            ORDER BY count ASC
+            LIMIT 1;
+            ''')
+
+        return cursor.fetchone()
+    
+
+    def services_in_rates(self):
+        """
+        Возвращет связь тарифов и услуг включенные в эти тарифы
+        """
+        with connection.cursor() as cursor:
+            cursor.execute('''
+            SELECT r.title AS rate_title, s.title AS service_title
+            FROM "Services_in_rates" AS sr
+            JOIN "Services" AS s ON sr.service_id = s.service_id
+            JOIN "Rates" AS r ON sr.rate_id = r.rate_id
+            ORDER BY r.title;
+            ''')
+        
+        return cursor.fetchall()
+    
+
+
 class Bookings(models.Model):
     booking = models.IntegerField(primary_key=True)
     client = models.ForeignKey('Clients', models.DO_NOTHING, blank=True, null=True)
@@ -41,6 +178,7 @@ class Clients(models.Model):
 
     def __str__(self) -> str:
         return self.name
+        
 
 
 class Comments(models.Model):
@@ -98,18 +236,6 @@ class Rooms(models.Model):
     
     def __str__(self) -> str:
         return self.number
-
-
-    def occupancy_rate(self):
-        with connection.cursor() as curscor:
-            occupancy = curscor.execute('''SELECT (
-                                        (SELECT count(*) 
-                                        FROM "Rooms" 
-                                        WHERE busy = true) 
-                                * 100) / COUNT(*) AS occupancy_rate 
-                                FROM "Rooms";'''
-                            )
-        return occupancy
 
 
 class Services(models.Model):
