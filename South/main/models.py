@@ -51,7 +51,7 @@ class LocalSqlQueries:
         return cursor.fetchall()
     
 
-    def get_popular_filial_type(self):
+    def get_popular_filial_type(self, type):
         """
         Возвращает какой филиал, берет чаще всего тип номера,
         который ввели
@@ -64,7 +64,7 @@ class LocalSqlQueries:
 	            FROM (
                     select "Rooms".room_id
 		            FROM "Rooms"
-		            WHERE "Rooms". type_number = 'Эконом'
+		            WHERE "Rooms". type_number = '%s'
                 ) as R
 	            join "Bookings" ON R.room_id = "Bookings".room_id
 	            GROUP BY "Bookings".filial_id
@@ -72,7 +72,7 @@ class LocalSqlQueries:
 	            LIMIT 1
 	        ) as B
             join "Filials" ON "Filials".filial_id = B.filial_id
-            ''')
+            ''', [type])
 
         return cursor.fetchone()
     
@@ -129,7 +129,7 @@ class LocalSqlQueries:
         return cursor.fetchone()
     
 
-    def services_in_rates(self):
+    def services_in_rates_all(self):
         """
         Возвращет связь тарифов и услуг включенные в эти тарифы
         """
