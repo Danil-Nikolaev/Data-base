@@ -14,6 +14,7 @@ cursor = connection.cursor()
 
 
 def generate_bookings(faker: Faker):
+    print(10*'-' + 'GENERATE BOOKINGS START' + 10*'-')
 
     cursor.execute("""
                        SELECT room_id 
@@ -45,11 +46,12 @@ def generate_bookings(faker: Faker):
         arrival_date = faker.date_between(start_date="today", end_date="+10y")
         departue_date = faker.date_between(start_date=arrival_date, end_date="+10y")
 
-        cursor.execute(f"""INSERT INTO "Bookings" (booking, client_id, filial_id, arrival_date, departue_date, room_id, rate_id)
-                          VALUES ({id}, {client_id}, {filial_id}, '{arrival_date}', '{departue_date}', {room_id}, {rate_id})
+        cursor.execute(f"""INSERT INTO "Bookings" (booking, client_id, filial_id, room_id, rate_id, arrival_date, departue_date)
+                          VALUES ({id}, {client_id}, {filial_id}, '{room_id}', '{rate_id}', {arrival_date }, {departue_date})
                         """)
         connection.commit()
         
+    print(10*'-' + 'GENERATE BOOKINGS FINISH' + 10*'-')
 
 
 def generate_rooms(faker:Faker):
@@ -58,6 +60,7 @@ def generate_rooms(faker:Faker):
     является количество спальных мест. Также если номер не занят,
     то поле client_id будет пустым
     """
+    print(10*'-' + 'GENERATE ROOMS START' + 10*'-')
     set_level_room = ("Эконом", "Полулюкс", "Люкс", "Презедентский", "Дом")
     for i in range(1000):
         id = i + 1
@@ -72,23 +75,33 @@ def generate_rooms(faker:Faker):
                           VALUES ({id}, {number}, '{type_number}', {busy}, {client_id})
                         """)
         connection.commit()
+    print(10*'-' + 'GENERATE ROOMS FINISH' + 10*'-')
 
 
 def generate_clients(faker: Faker):
+    print(10*'-' + 'GENERATE CLIENTS START' + 10*'-')
+    count_workers = 0
+    worker = False
     for i in range(10_000_000):
         id = i + 1
         name = faker.name()
         birthday = faker.date_between(start_date = "-70y", end_date="-10y")
+        if count_workers < 500:
+            worker = random.choices((True, False), weights=[5,100])[0]
+            if worker:
+                birthday = faker.date_between(start_date = "-50y", end_date="-20y")
         gender = random.choice(("Man", "Woman"))
         phone = faker.phone_number()
         email = faker.ascii_free_email()
-        cursor.execute(f"""INSERT INTO "Clients" (client_id, name, birthday, gender, phone, email)
-                          VALUES ({id}, '{name}', '{birthday}', '{gender}', '{phone}', '{email}')
+        cursor.execute(f"""INSERT INTO "Clients" (client_id, worker,name, birthday, gender, phone, email)
+                          VALUES ({id}, '{worker}', '{name}', '{birthday}', '{gender}', '{phone}', '{email}')
                         """)
         connection.commit()
+    print(10*'-' + 'GENERATE CLIENTS FINISH' + 10*'-')
 
 
 def generate_filials(faker: Faker):
+    print(10*'-' + 'GENERATE FILIALS START' + 10*'-')
     for i in range(200):
         id = i + 1
         title = faker.company()
@@ -99,9 +112,11 @@ def generate_filials(faker: Faker):
                           VALUES ({id}, '{title}', '{address}', '{phone}', '{email}')
                         """)
         connection.commit()
+    print(10*'-' + 'GENERATE FILIALS FINISH' + 10*'-')
 
 
 def generate_services_in_rates():
+    print(10*'-' + 'GENERATE SERVICES_IN_RATES START' + 10*'-')
     for i in range(100):
         id = i + 1
         rate_id = random.randint(1,5)
@@ -109,9 +124,11 @@ def generate_services_in_rates():
         cursor.execute(f"""INSERT INTO "Services_in_rates" (id, rate_id, service_id) 
                        VALUES ({id}, {rate_id}, {service_id})""")
         connection.commit()
+    print(10*'-' + 'GENERATE SERVICES_IN_RATES FINISH' + 10*'-')
         
 
 def generate_rates():
+    print(10*'-' + 'GENERATE RATES START' + 10*'-')
     with open("json_files/rates.json", "r", encoding="utf-8") as f:
         dict_rates = json.load(f)
     id = 0
@@ -127,10 +144,12 @@ def generate_rates():
                            VALUES ({id}, '{title}', '{description}', '{price}')
                         """)
         connection.commit()
+    print(10*'-' + 'GENERATE RATES FINISH' + 10*'-')
 
 
 
 def generate_services(faker: Faker):
+    print(10*'-' + 'GENERATE SERVICES START' + 10*'-')
     with open("json_files/service.json", "r", encoding="utf-8") as f:
         dict_services = json.load(f)
     id = 0
@@ -143,40 +162,75 @@ def generate_services(faker: Faker):
                           VALUES ({id}, '{title}', '{description}', '{price}')
                         """)
         connection.commit()
+    print(10*'-' + 'GENERATE SERVICES FINISH' + 10*'-')
 
 
-def generate_workers(faker: Faker):
-    """
-    Функция для генерации персонала санаторно-курортного комплекса.
-    """
-    list_post = [ "Повар", "Консьерж", "Бухгалтер",
-                 "Аниматор", "Официант", "Врач", 
-                 "Администратор", "Охранник", "Медсестра", 
-                 "Горничные", "Тренер", "Садовник"]
-    
-    for i in range(500):
-        id = i + 1
-        name = faker.name()
-        post = random.choice(list_post)
-        phone = faker.phone_number()
-        email = faker.ascii_free_email()
-        address = faker.address()
-        cursor.execute(f"""INSERT INTO "Workers" (worker_id, name, post, phone, email, address) 
-                           VALUES ({id}, '{name}', '{post}', '{phone}', '{email}', '{address}')
-                       """)
+def generate_services_in_bookings():
+    print(10*'-' + 'GENERATE SERVICES_IN_BOOKINGS START' + 10*'-')
+    for i in range(1_000):
+        id = i
+        booking_id = random.randint(0,10_000)
+        cursor.execute(f"""
+        SELECT rate_id
+        FROM "Bookings"
+        WHERE booking_id = {booking_id}
+        """)
+        rate = cursor.fetchone()[0]
+        cursor.execute(f"""
+            SELECT s.service_id AS service_title
+            FROM "Services_in_rates" AS sr
+            JOIN "Services" AS s ON sr.service_id = s.service_id
+            JOIN "Rates" AS r ON sr.rate_id = r.{rate}
+        """)
+        query_services = cursor.fetchall()
+        services = [service[0] for service in query_services]
+        service = random.randint(0, 99)
+        while service in services:
+            service = random.randint(0, 99)
+        cursor.execute(
+            f"""
+            INSERT INTO (id, booking_id, service_id)
+            VALUES ({id}, {booking_id}, {service})
+            """
+            )
         connection.commit()
+    print(10*'-' + 'GENERATE SERVICES_IN_BOOKINGS FINISH' + 10*'-')
+        
+        
+
+
+def generate_workers_in_services():
+    print(10*'-' + 'GENERATE workers_in_services START' + 10*'-')
+    cursor.execute(f"""
+                            SELECT client_id
+                            FROOM "Clients"
+                            WHERE worker = true;
+                            """)
+    workers = cursor.fetchall()
+    id = 0
+    for worker in workers:
+        worker_id = worker[0]
+        service_id = random.randint(0, 99)
+        cursor.execute(f"""
+        INSERT INTO "Workers_in_services" (Workers_in_services_id, client_id, service_id)
+        VALUES ({id}, {worker_id}, {service_id})
+        """)
+        connection.commit()
+        id += 1
+    print(10*'-' + 'GENERATE workers_in_services FINISH' + 10*'-')
 
 
 def main():
     faker = Faker(locale='ru_RU')
-    # generate_workers(faker)
-    # generate_services(faker)
-    # generate_rates()
-    # generate_services_in_rates()
-    # generate_filials(faker)
-    # generate_clients(faker)
-    # generate_rooms(faker)
+    generate_services(faker)
+    generate_rates()
+    generate_services_in_rates()
+    generate_filials(faker)
+    generate_clients(faker)
+    generate_rooms(faker)
+    generate_workers_in_services()
     generate_bookings(faker)
+    generate_services_in_bookings()
 
 if __name__ == "__main__":
     main()
