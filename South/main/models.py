@@ -16,7 +16,7 @@ class LocalSqlQueries:
     Класс с сырыми sql заросами
     """
 
-    def occupancy_rate(self):
+    def occupancy_rate():
         """
         Процент заполнености номеров
         """
@@ -32,7 +32,7 @@ class LocalSqlQueries:
         return curscor.fetchone()
     
 
-    def  get_birthday_tommorow(self):
+    def  get_birthday_tommorow():
         """
         Возвращает у кого завтра день рождение
         и в каком номере
@@ -51,7 +51,7 @@ class LocalSqlQueries:
         return cursor.fetchall()
     
 
-    def get_popular_filial_type(self, type):
+    def get_popular_filial_type(type):
         """
         Возвращает какой филиал, берет чаще всего тип номера,
         который ввели
@@ -77,7 +77,7 @@ class LocalSqlQueries:
         return cursor.fetchone()
     
 
-    def popular_type_rooms(self):
+    def popular_type_rooms():
         """
         Возвращает самый популярный тип номера
         """
@@ -93,7 +93,7 @@ class LocalSqlQueries:
         return cursor.fetchone()
     
 
-    def popular_rates(self):
+    def popular_rates():
         """
         Возвращает самый популярный тариф
         """
@@ -129,7 +129,7 @@ class LocalSqlQueries:
         return cursor.fetchone()
     
 
-    def services_in_rates_all(self):
+    def services_in_rates_all():
         """
         Возвращет связь тарифов и услуг включенные в эти тарифы
         """

@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 
 from django.views import View
 from django.views.generic import ListView
@@ -8,6 +8,45 @@ from django.views.generic import DetailView
 from main.models import Services, Rates, Rooms, Filials, Workers, Clients, Bookings, LocalSqlQueries
 
 from django.db.models.fields import Field
+
+
+class OccupancyRate(View):
+
+    def get(self, request, *args, **kwargs):
+        local_tuple = LocalSqlQueries.occupancy_rate()
+        print(local_tuple)
+        return JsonResponse(result)
+
+
+class Birthday(View):
+    
+    def get(self, request, *args, **kwargs):
+        return JsonResponse(result)
+
+
+class PopularFilialType(View):
+    
+    def get(self, request, *args, **kwargs):
+        return JsonResponse(result)
+
+
+class PopularTypeRooms(View):
+    
+    def get(self, request, *args, **kwargs):
+        return JsonResponse(result)
+
+
+class PopularRates(View):
+    
+    def get(self, request, *args, **kwargs):
+        return JsonResponse(result)
+
+
+class UnpopularFilial(View):
+    
+    def get(self, request, *args, **kwargs):
+        return JsonResponse(result)
+
 
 
 class MainView(View):
@@ -42,7 +81,6 @@ class ListRates(ListView):
         context['fields'] = self.model._meta.get_fields()
         name_fields = ['rate_id', 'title', 'description', 'price']
         context['name_fields'] = name_fields
-        context['popular_rate'] = LocalSqlQueries.popular_rates()
         return context  
 
 
@@ -56,9 +94,6 @@ class ListRooms(ListView):
         context['fields'] = self.model._meta.get_fields()
         name_fields = ['room_id', 'number', 'type_number', 'busy', 'client']
         context['name_fields'] = name_fields
-        context['occupancy_rate'] = LocalSqlQueries.occupancy_rate()
-        context['birthday_tommorow'] = LocalSqlQueries.get_birthday_tommorow()
-        context['popular_types_room'] = LocalSqlQueries.popular_type_rooms()
         return context  
 
 
@@ -72,8 +107,6 @@ class ListFilials(ListView):
         context['fields'] = self.model._meta.get_fields()
         name_fields = ['filial_id', 'title', 'address', 'phone', 'email']
         context['name_fields'] = name_fields
-        context['popular_filial_type'] = LocalSqlQueries.get_popular_filial_type("Дом")
-        context['unpopular_filial'] = LocalSqlQueries.unpopular_filial()
         return context  
 
 
