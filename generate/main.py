@@ -46,8 +46,8 @@ def generate_bookings(faker: Faker):
         arrival_date = faker.date_between(start_date="today", end_date="+10y")
         departue_date = faker.date_between(start_date=arrival_date, end_date="+10y")
 
-        cursor.execute(f"""INSERT INTO "Bookings" (booking, client_id, filial_id, room_id, rate_id, arrival_date, departue_date)
-                          VALUES ({id}, {client_id}, {filial_id}, '{room_id}', '{rate_id}', {arrival_date }, {departue_date})
+        cursor.execute(f"""INSERT INTO "Bookings" (booking_id, client_id, filial_id, room_id, rate_id, arrival_date, departue_date)
+                          VALUES ({id}, {client_id}, {filial_id}, {room_id}, {rate_id}, '{arrival_date }', '{departue_date}')
                         """)
         connection.commit()
         
@@ -81,14 +81,15 @@ def generate_rooms(faker:Faker):
 def generate_clients(faker: Faker):
     print(10*'-' + 'GENERATE CLIENTS START' + 10*'-')
     count_workers = 0
-    worker = False
     for i in range(10_000_000):
+        worker = False
         id = i + 1
         name = faker.name()
         birthday = faker.date_between(start_date = "-70y", end_date="-10y")
         if count_workers < 500:
             worker = random.choices((True, False), weights=[5,100])[0]
             if worker:
+                count_workers += 1
                 birthday = faker.date_between(start_date = "-50y", end_date="-20y")
         gender = random.choice(("Man", "Woman"))
         phone = faker.phone_number()
@@ -180,16 +181,16 @@ def generate_services_in_bookings():
             SELECT s.service_id AS service_title
             FROM "Services_in_rates" AS sr
             JOIN "Services" AS s ON sr.service_id = s.service_id
-            JOIN "Rates" AS r ON sr.rate_id = r.{rate}
+            JOIN "Rates" AS r ON sr.rate_id = {rate}
         """)
         query_services = cursor.fetchall()
         services = [service[0] for service in query_services]
-        service = random.randint(0, 99)
+        service = random.randint(1, 99)
         while service in services:
-            service = random.randint(0, 99)
+            service = random.randint(1, 99)
         cursor.execute(
             f"""
-            INSERT INTO (id, booking_id, service_id)
+            INSERT INTO "Services_in_bookings" ("id", "booking_id", "service_id")
             VALUES ({id}, {booking_id}, {service})
             """
             )
@@ -203,16 +204,16 @@ def generate_workers_in_services():
     print(10*'-' + 'GENERATE workers_in_services START' + 10*'-')
     cursor.execute(f"""
                             SELECT client_id
-                            FROOM "Clients"
+                            FROM "Clients"
                             WHERE worker = true;
                             """)
     workers = cursor.fetchall()
     id = 0
     for worker in workers:
         worker_id = worker[0]
-        service_id = random.randint(0, 99)
+        service_id = random.randint(1, 99)
         cursor.execute(f"""
-        INSERT INTO "Workers_in_services" (Workers_in_services_id, client_id, service_id)
+        INSERT INTO "Workers_in_services" ("Workers_in_services_id", "cleint_id", "service_id")
         VALUES ({id}, {worker_id}, {service_id})
         """)
         connection.commit()
@@ -222,14 +223,14 @@ def generate_workers_in_services():
 
 def main():
     faker = Faker(locale='ru_RU')
-    generate_services(faker)
-    generate_rates()
-    generate_services_in_rates()
-    generate_filials(faker)
-    generate_clients(faker)
-    generate_rooms(faker)
-    generate_workers_in_services()
-    generate_bookings(faker)
+    # generate_services(faker)
+    # generate_rates()
+    # generate_services_in_rates()
+    # generate_filials(faker)
+    # generate_clients(faker)
+    # generate_rooms(faker)
+    # generate_workers_in_services()
+    # generate_bookings(faker)
     generate_services_in_bookings()
 
 if __name__ == "__main__":
