@@ -1,0 +1,38 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+<section class="list-model">
+    <div class="container">
+        <h1>
+            Из какого филиала берут чаще какой тип номера
+        </h1>
+        <table class="table">
+            <tr>
+                <th style="text-align: center;">
+                    Филиал
+                </th>
+                <th style="text-align: center;">
+                    Тип номера
+                </th>
+                <th style="text-align: center;">
+                    Количество
+                </th>
+            </tr>
+            {% for mod in model %}
+            <tr>
+                <td style="text-align: center;">
+                    {{mod.0}}
+                </td>
+                <td style="text-align: center;">
+                    {{mod.1}}
+                </td>
+                <td style="text-align: center;">
+                    {{mod.2}}
+                </td>
+            </tr>
+            
+            {% endfor %}
+        </table>
+    </div>
+</section>
+{% endblock %}

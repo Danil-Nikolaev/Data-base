@@ -2,51 +2,76 @@ from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 
 from django.views import View
-from django.views.generic import ListView
+from django.views.generic import ListView, TemplateView
 from django.views.generic import DetailView
 
-from main.models import Services, Rates, Rooms, Filials, Workers, Clients, Bookings, LocalSqlQueries
+from main.models import Services, Rates, Rooms, Filials, Clients, Bookings, LocalSqlQueries
 
 from django.db.models.fields import Field
 
 
-class OccupancyRate(View):
-
-    def get(self, request, *args, **kwargs):
-        local_tuple = LocalSqlQueries.occupancy_rate()
-        print(local_tuple)
-        return JsonResponse(result)
-
-
-class Birthday(View):
+class OccupancyRate(TemplateView):
+    template_name = 'main/list_query/list_occupancy_rate.html'
     
-    def get(self, request, *args, **kwargs):
-        return JsonResponse(result)
-
-
-class PopularFilialType(View):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["model"] = LocalSqlQueries.occupancy_rate()
+        return context
     
-    def get(self, request, *args, **kwargs):
-        return JsonResponse(result)
 
 
-class PopularTypeRooms(View):
+class Birthday(TemplateView):
+    template_name = 'main/list_query/list_birthday.html'
     
-    def get(self, request, *args, **kwargs):
-        return JsonResponse(result)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["model"] = LocalSqlQueries.get_birthday_tommorow()
+        return context
 
 
-class PopularRates(View):
+class PopularFilialType(TemplateView):
+    template_name = 'main/list_query/list_popular_filial_type.html'
     
-    def get(self, request, *args, **kwargs):
-        return JsonResponse(result)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["model"] = LocalSqlQueries.get_popular_filial_type()
+        return context
 
 
-class UnpopularFilial(View):
+class PopularTypeRooms(TemplateView):
+    template_name = 'main/list_query/list_popular_type_rooms.html'
     
-    def get(self, request, *args, **kwargs):
-        return JsonResponse(result)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["model"] = LocalSqlQueries.popular_type_rooms()
+        return context
 
+
+class PopularRates(TemplateView):
+    template_name = 'main/list_query/list_popular_rates.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["model"] = LocalSqlQueries.popular_rates()
+        return context
+
+
+class UnpopularFilial(TemplateView):
+    template_name = 'main/list_query/list_unpopular_filial.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["model"] = LocalSqlQueries.unpopular_filial()
+        return context
+
+
+class ServicesInRates(TemplateView):
+    template_name = 'main/list_query/list_services_in_rates.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["model"] = LocalSqlQueries.services_in_rates_all()
+        return context
 
 
 class MainView(View):
@@ -108,19 +133,6 @@ class ListFilials(ListView):
         name_fields = ['filial_id', 'title', 'address', 'phone', 'email']
         context['name_fields'] = name_fields
         return context  
-
-
-class ListWorkers(ListView):
-    template_name = 'main/list/list_workers.html'
-    model = Workers
-    context_object_name = 'models'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['fields'] = self.model._meta.get_fields()
-        name_fields = ['worker_id', 'name', 'post', 'phone', 'email', 'address']
-        context['name_fields'] = name_fields
-        return context   
 
 
 class ListClients(ListView):

@@ -1,0 +1,29 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+<section class="list-model">
+    <div class="container">
+        <table class="table">
+            <tr>
+                <th style="text-align: center;">
+                    ФИО
+                </th>
+                <th style="text-align: center;">
+                    Номер
+                </th>
+            </tr>
+            {% for mod in model %}
+            <tr>
+                <td style="text-align: center;">
+                    {{mod.0}}
+                </td>
+                <td style="text-align: center;">
+                    {{mod.1}}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</section>
+
+{% endblock %}

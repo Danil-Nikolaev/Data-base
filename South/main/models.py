@@ -29,7 +29,7 @@ class LocalSqlQueries:
                             * 100) / COUNT(*) AS occupancy_rate 
                             FROM "Rooms";
                             ''')
-        return curscor.fetchone()
+            return curscor.fetchone()
     
 
     def  get_birthday_tommorow():
@@ -48,33 +48,37 @@ class LocalSqlQueries:
                 ) AS B
                 JOIN "Rooms" ON B.client_id = "Rooms".client_id
             ''')
-        return cursor.fetchall()
+            return cursor.fetchall()
     
 
-    def get_popular_filial_type(type):
+    def get_popular_filial_type():
         """
-        Возвращает какой филиал, берет чаще всего тип номера,
-        который ввели
+        Из какого филиала берут чаще какой тип номера
         """
         with connection.cursor() as cursor:
+            # cursor.execute('''
+            # select "Filials".title, B.count, B.type.number
+            # from (
+	        #     select "Bookings".filial_id, count("Bookings".filial_id) as count, "Rooms".type_number
+	        #     FROM "Rooms" as R
+	        #     join "Bookings" ON R.room_id = "Bookings".room_id
+	        #     GROUP BY "Bookings".filial_id
+	        #     ORDER BY count("Bookings".filial_id) DESC
+	        # ) as B
+            # join "Filials" ON "Filials".filial_id = B.filial_id
+            # ''')
             cursor.execute('''
-            select "Filials".title, B.count
-            from (
-	            select "Bookings".filial_id, count("Bookings".filial_id) as count
-	            FROM (
-                    select "Rooms".room_id
-		            FROM "Rooms"
-		            WHERE "Rooms". type_number = '%s'
-                ) as R
-	            join "Bookings" ON R.room_id = "Bookings".room_id
-	            GROUP BY "Bookings".filial_id
-	            ORDER BY count("Bookings".filial_id) DESC
-	            LIMIT 1
-	        ) as B
-            join "Filials" ON "Filials".filial_id = B.filial_id
-            ''', [type])
+                SELECT f.title, r.type_number, COUNT(*) AS count 
+                FROM "Filials" as f 
+                JOIN "Bookings" as b 
+                ON f.filial_id = b.filial_id 
+                JOIN "Rooms" as r 
+                ON r.room_id = b.room_id 
+                GROUP BY f.title, r.type_number 
+                ORDER BY count DESC;
+            ''')
 
-        return cursor.fetchone()
+            return cursor.fetchall()
     
 
     def popular_type_rooms():
@@ -90,7 +94,7 @@ class LocalSqlQueries:
                 LIMIT 1;
                 ''')
         
-        return cursor.fetchone()
+            return cursor.fetchone()
     
 
     def popular_rates():
@@ -108,15 +112,15 @@ class LocalSqlQueries:
             LIMIT 1;
             ''')
         
-        return cursor.fetchone()
+            return cursor.fetchone()
     
     
-    def unpopular_filial(self):
+    def unpopular_filial():
         """
         Возвращает самый не популярный филиал
         """
         with connection.cursor() as cursor:
-            cursor.connection('''
+            cursor.execute('''
             SELECT title, COUNT(*) AS count 
             FROM "Filials"
             JOIN "Bookings" 
@@ -126,7 +130,7 @@ class LocalSqlQueries:
             LIMIT 1;
             ''')
 
-        return cursor.fetchone()
+            return cursor.fetchone()
     
 
     def services_in_rates_all():
@@ -142,29 +146,31 @@ class LocalSqlQueries:
             ORDER BY r.title;
             ''')
         
-        return cursor.fetchall()
+            model = cursor.fetchall()
+        return model
     
 
 
 class Bookings(models.Model):
-    booking = models.IntegerField(primary_key=True)
+    booking_id = models.IntegerField(primary_key=True)
     client = models.ForeignKey('Clients', models.DO_NOTHING, blank=True, null=True)
     filial = models.ForeignKey('Filials', models.DO_NOTHING, blank=True, null=True)
-    arrival_date = models.DateField(blank=True, null=True)
-    departue_date = models.DateField(blank=True, null=True)
     room = models.ForeignKey('Rooms', models.DO_NOTHING, blank=True, null=True)
     rate = models.ForeignKey('Rates', models.DO_NOTHING, blank=True, null=True)
+    arrival_date = models.DateField(blank=True, null=True)
+    departue_date = models.DateField(blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'Bookings'
     
     def __str__(self) -> str:
-        return self.booking
+        return self.booking_id
 
 
 class Clients(models.Model):
     client_id = models.IntegerField(primary_key=True)
+    worker = models.BooleanField(blank=True, null=True)
     name = models.CharField(blank=True, null=True)
     birthday = models.DateField(blank=True, null=True)
     gender = models.CharField(blank=True, null=True)
@@ -178,7 +184,6 @@ class Clients(models.Model):
 
     def __str__(self) -> str:
         return self.name
-        
 
 
 class Comments(models.Model):
@@ -190,6 +195,10 @@ class Comments(models.Model):
     class Meta:
         managed = False
         db_table = 'Comments'
+    
+
+    def __str__(self) -> str:
+        return self.description
 
 
 class Filials(models.Model):
@@ -202,7 +211,7 @@ class Filials(models.Model):
     class Meta:
         managed = False
         db_table = 'Filials'
-
+    
 
     def __str__(self) -> str:
         return self.title
@@ -217,7 +226,7 @@ class Rates(models.Model):
     class Meta:
         managed = False
         db_table = 'Rates'
-
+    
 
     def __str__(self) -> str:
         return self.title
@@ -225,17 +234,18 @@ class Rates(models.Model):
 
 class Rooms(models.Model):
     room_id = models.IntegerField(primary_key=True)
+    client = models.ForeignKey(Clients, models.DO_NOTHING, blank=True, null=True)
     number = models.IntegerField(blank=True, null=True)
     type_number = models.CharField(blank=True, null=True)
     busy = models.BooleanField(blank=True, null=True)
-    client = models.ForeignKey(Clients, models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'Rooms'
     
+
     def __str__(self) -> str:
-        return self.number
+        return self.room_id
 
 
 class Services(models.Model):
@@ -248,9 +258,19 @@ class Services(models.Model):
         managed = False
         db_table = 'Services'
     
-    
+
     def __str__(self) -> str:
         return self.title
+
+
+class ServicesInBookings(models.Model):
+    id = models.IntegerField(primary_key=True)
+    booking = models.ForeignKey(Bookings, models.DO_NOTHING, blank=True, null=True)
+    service = models.ForeignKey(Services, models.DO_NOTHING, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'Services_in_bookings'
 
 
 class ServicesInRates(models.Model):
@@ -263,19 +283,12 @@ class ServicesInRates(models.Model):
         db_table = 'Services_in_rates'
 
 
-class Workers(models.Model):
-    worker_id = models.IntegerField(primary_key=True)
-    name = models.CharField(blank=True, null=True)
-    post = models.CharField(blank=True, null=True)
-    phone = models.CharField(blank=True, null=True)
-    email = models.CharField(blank=True, null=True)
-    address = models.CharField(blank=True, null=True)
+class WorkersInServices(models.Model):
+    workers_in_services_id = models.IntegerField(db_column='Workers_in_services_id', primary_key=True)  # Field name made lowercase.
+    cleint = models.ForeignKey(Clients, models.DO_NOTHING, blank=True, null=True)
+    service = models.ForeignKey(Services, models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
         managed = False
-        db_table = 'Workers'
-    
-
-    def __str__(self) -> str:
-        return self.name
+        db_table = 'Workers_in_services'
 

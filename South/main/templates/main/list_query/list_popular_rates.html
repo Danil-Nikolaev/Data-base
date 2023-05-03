@@ -1,0 +1,29 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+<section class="list-model">
+    <div class="container">
+        <h1>
+            Самый популярный тариф
+        </h1>
+        <table class="table">
+            <tr>
+                <th style="text-align: center;">
+                    Тариф
+                </th>
+                <th style="text-align: center;">
+                    Сколько раз его брали
+                </th>
+            </tr>
+            <tr>
+                <td style="text-align: center;">
+                    {{model.0}}
+                </td>
+                <td style="text-align: center;">
+                    {{model.1}}
+                </td>
+            </tr>
+        </table>
+    </div>
+</section>
+{% endblock %}
