@@ -1,21 +1,26 @@
 from django.urls import path
-from main.views import MainView, ListBookings, ListClients, ListFilials, ListRates, ListRooms, ListServices
-from main.views import OccupancyRate, Birthday, PopularTypeRooms, PopularRates, PopularFilialType, UnpopularFilial, ServicesInRates
+from main.views import MainView, ListFilials, ListRates, ListRooms, ListProcedures, ListReservations, ListPatients, ListDoctors, ListMeals, ListAppointments
+from main.views import PatientsWithAppointment, ProcedureHighPrice, DoctorsHigh, DoctorsWithAppointment, PatientsWithHighPriceProcedure, ProcedureWithoutAppointment, PatientsLowCapacity
 from . import views
 
 urlpatterns = [
     path('', MainView.as_view()),
-    path('bookings/', ListBookings.as_view()),
-    path('clients/', ListClients.as_view()),
+    
+    path('reservations/', ListReservations.as_view()),
+    path('clients/', ListPatients.as_view()),
     path('filials/', ListFilials.as_view()),
     path('rates/', ListRates.as_view()),
     path('rooms/', ListRooms.as_view()),
-    path('services/', ListServices.as_view()),
-    path('services/services_in_rates/', ServicesInRates.as_view()),
-    path('rooms/occupancy_rate/', OccupancyRate.as_view()), 
-    path('rooms/birthday/', Birthday.as_view()), 
-    path('rooms/popular_type_rooms/', PopularTypeRooms.as_view()),
-    path('rates/popular_rates/', PopularRates.as_view()),
-    path('filials/popular_filial_type/', PopularFilialType.as_view()),
-    path('filials/unpopular_filial/', UnpopularFilial.as_view())
+    path('services/', ListProcedures.as_view()),
+    path('doctors/', ListDoctors.as_view()),
+    path('meals/', ListMeals.as_view()),
+    path('appointments/', ListAppointments.as_view()),
+
+    path('PatientsWithAppointment/', PatientsWithAppointment.as_view()),
+    path('ProcedureHighPrice/', ProcedureHighPrice.as_view()),
+    path('DoctorsHigh/', DoctorsHigh.as_view()),
+    path('DoctorsWithAppointment/', DoctorsWithAppointment.as_view()),
+    path('PatientsWithHighPriceProcedure/', PatientsWithHighPriceProcedure.as_view()),
+    path('ProcedureWithoutAppointment/', ProcedureWithoutAppointment.as_view()),
+    path('PatientsLowCapacity/', PatientsLowCapacity.as_view())
 ]
