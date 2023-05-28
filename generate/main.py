@@ -32,7 +32,7 @@ def generate_patients(faker):
         rate_id = random.randint(1, 5)
         cursor.execute(f"""INSERT INTO "Patients" (first_name, last_name, birthdate, gender, address, phone_number, 
                             email, room_id, doctor_id, reservation_id, appointment_id, meal_id, filial_id, rate_id)
-                          VALUES ('{first_name}', '{last_name}', '{birthdate}', '{gender}', '{address}, '{phone_number}',
+                          VALUES ('{first_name}', '{last_name}', '{birthdate}', '{gender}', '{address}', '{phone_number}',
                           '{email}', {room_id}, {doctor_id}, {reservation_id}, {appointment_id}, {meal_id}, {filial_id}, {rate_id})
                         """)
         connection.commit()
@@ -58,8 +58,8 @@ def generate_doctors(faker):
     with open("json_files/specialization.json", "r", encoding="utf-8") as f:
         dict_specialization = json.load(f)
     for _ in range(300):
-        id_spec = random.randint(1, 21)
-        specialization = dict_specialization[id_spec]
+        id_spec = random.randint(1, 20)
+        specialization = dict_specialization[str(id_spec)]
         first_name = faker.first_name()
         last_name = faker.last_name()
         phone_number = faker.phone_number()
@@ -153,7 +153,7 @@ def generate_procedures(faker: Faker):
         procedure_name = key
         description = value
         price = random.randint(500, 5000)
-        cursor.execute(f"""INSERT INTO "Services" (procedure_name, description, price)
+        cursor.execute(f"""INSERT INTO "Procedures" (procedure_name, description, price)
                           VALUES ('{procedure_name}', '{description}', '{price}')
                         """)
         connection.commit()
