@@ -16,279 +16,253 @@ class LocalSqlQueries:
     Класс с сырыми sql заросами
     """
 
-    def occupancy_rate():
+    def patients_with_appointment():
         """
-        Процент заполнености номеров
+        Получить список всех пациентов, у которых есть назначенные процедуры
         """
         with connection.cursor() as curscor:
             curscor.execute('''
-                            SELECT (
-                            (SELECT count(*) 
-                            FROM "Rooms" 
-                            WHERE busy = true) 
-                            * 100) / COUNT(*) AS occupancy_rate 
-                            FROM "Rooms";
+                            SELECT *
+                            FROM "Patients"
+                            WHERE EXISTS (
+                            SELECT 1
+                            FROM "Appointments"
+                            WHERE "Appointments"."appointment_id" = "Patients"."appointment_id"
+                            )
+                            limit 1000;
+                            
                             ''')
-            return curscor.fetchone()
+            return curscor.fetchall()
     
 
-    def  get_birthday_tommorow():
+    def  procedure_high_price():
         """
-        Возвращает у кого завтра день рождение
-        и в каком номере
+        Получить список всех процедур, которые стоят дороже средней стоимости всех процедур:
         """
         with connection.cursor() as cursor:
             cursor.execute('''
-                    SELECT B.name, "Rooms".number
-                    FROM (SELECT "Clients".client_id, "Clients".name
-                    FROM "Clients"
-                    where (date_part('month',"Clients".birthday) = date_part('month' ,CURRENT_DATE)) 
-                    and (date_part('day',"Clients".birthday) > date_part('day' ,CURRENT_DATE))
-                    and ((date_part('day',"Clients".birthday) - date_part('day' ,CURRENT_DATE)) < 2)
-                ) AS B
-                JOIN "Rooms" ON B.client_id = "Rooms".client_id
+                    SELECT *
+                    FROM "Procedures"
+                    WHERE "price" > (
+                    SELECT AVG("price")
+                    FROM "Procedures"
+                    );
             ''')
             return cursor.fetchall()
     
 
-    def get_popular_filial_type():
+    def doctors_high():
         """
-        Из какого филиала берут чаще какой тип номера
+       Вывести список всех врачей, специализирующихся на процедурах с ценой выше средней цены по всем процедурам
         """
         with connection.cursor() as cursor:
-            # cursor.execute('''
-            # select "Filials".title, B.count, B.type.number
-            # from (
-	        #     select "Bookings".filial_id, count("Bookings".filial_id) as count, "Rooms".type_number
-	        #     FROM "Rooms" as R
-	        #     join "Bookings" ON R.room_id = "Bookings".room_id
-	        #     GROUP BY "Bookings".filial_id
-	        #     ORDER BY count("Bookings".filial_id) DESC
-	        # ) as B
-            # join "Filials" ON "Filials".filial_id = B.filial_id
-            # ''')
+
             cursor.execute('''
-                SELECT f.title, r.type_number, COUNT(*) AS count 
-                FROM "Filials" as f 
-                JOIN "Bookings" as b 
-                ON f.filial_id = b.filial_id 
-                JOIN "Rooms" as r 
-                ON r.room_id = b.room_id 
-                GROUP BY f.title, r.type_number 
-                ORDER BY count DESC;
+                SELECT *
+                FROM "Doctors"
+                WHERE "doctor_id" IN (
+                SELECT DISTINCT "doctor_id"
+                FROM "Appointments"
+                WHERE "procedure_id" IN (
+                    SELECT "procedure_id"
+                    FROM "Procedures"
+                    WHERE "price" > (
+                    SELECT AVG("price")
+                    FROM "Procedures"
+                    )
+                )
+                );
             ''')
 
             return cursor.fetchall()
     
 
-    def popular_type_rooms():
+    def doctors_with_appointment():
         """
-        Возвращает самый популярный тип номера
+        Получить список всех докторов, у которых есть назначенные пациенты
         """
         with connection.cursor() as cursor:
             cursor.execute('''
-                SELECT type_number, COUNT(*) AS count 
-                FROM "Rooms" 
-                GROUP BY type_number 
-                ORDER BY count DESC 
-                LIMIT 1;
+                SELECT *
+                FROM "Doctors"
+                WHERE "doctor_id" IN (
+                SELECT DISTINCT "doctor_id"
+                FROM "Patients"
+                );
                 ''')
         
-            return cursor.fetchone()
+            return cursor.fetchall()
     
 
-    def popular_rates():
+    def patients_with_high_price_procedure():
         """
-        Возвращает самый популярный тариф
+        Получить список всех пациентов, у которых есть назначенные процедуры, стоимость которых выше средней стоимости всех процедур
         """
         with connection.cursor() as cursor:
             cursor.execute('''
-            SELECT title, COUNT(*) AS count 
-            FROM "Rates" 
-            JOIN "Bookings" 
-            ON "Rates".rate_id = "Bookings".rate_id 
-            GROUP BY title
-            ORDER BY count DESC 
-            LIMIT 1;
+            SELECT "Patients".*
+            FROM "Patients"
+            JOIN "Appointments" ON "Appointments"."appointment_id" = "Patients"."appointment_id"
+            JOIN "Procedures" ON "Procedures"."procedure_id" = "Appointments"."procedure_id"
+            WHERE "Procedures"."price" > (
+            SELECT AVG("price")
+            FROM "Procedures"
+            ) limit 1000;
+
             ''')
         
-            return cursor.fetchone()
+            return cursor.fetchall()
     
     
-    def unpopular_filial():
+    def procedure_without_appointment():
         """
-        Возвращает самый не популярный филиал
+        Вывести список всех процедур, которые никогда не были назначены на встречу
         """
         with connection.cursor() as cursor:
             cursor.execute('''
-            SELECT title, COUNT(*) AS count 
-            FROM "Filials"
-            JOIN "Bookings" 
-            ON "Filials".filial_id = "Bookings".filial_id
-            GROUP BY title
-            ORDER BY count ASC
-            LIMIT 1;
+            SELECT *
+            FROM "Procedures"
+            WHERE NOT EXISTS (
+            SELECT *
+            FROM "Appointments"
+            WHERE "Procedures"."procedure_id" = "Appointments"."procedure_id"
+            );
             ''')
 
-            return cursor.fetchone()
+            return cursor.fetchall()
     
 
-    def services_in_rates_all():
+    def patients_low_capacity():
         """
-        Возвращет связь тарифов и услуг включенные в эти тарифы
+        Вывести список всех пациентов, которые забронировали комнату с наименьшей вместимостью
         """
         with connection.cursor() as cursor:
             cursor.execute('''
-            SELECT r.title AS rate_title, s.title AS service_title
-            FROM "Services_in_rates" AS sr
-            JOIN "Services" AS s ON sr.service_id = s.service_id
-            JOIN "Rates" AS r ON sr.rate_id = r.rate_id
-            ORDER BY r.title;
+            SELECT *
+            FROM "Patients"
+            WHERE "room_id" IN (
+            SELECT "room_id"
+            FROM "Rooms"
+            WHERE "capacity" = (
+                SELECT MIN("capacity")
+                FROM "Rooms"
+            )
+            ) limit 1000;
             ''')
         
             model = cursor.fetchall()
         return model
     
 
-
-class Bookings(models.Model):
-    booking_id = models.IntegerField(primary_key=True)
-    client = models.ForeignKey('Clients', models.DO_NOTHING, blank=True, null=True)
-    filial = models.ForeignKey('Filials', models.DO_NOTHING, blank=True, null=True)
-    room = models.ForeignKey('Rooms', models.DO_NOTHING, blank=True, null=True)
-    rate = models.ForeignKey('Rates', models.DO_NOTHING, blank=True, null=True)
-    arrival_date = models.DateField(blank=True, null=True)
-    departue_date = models.DateField(blank=True, null=True)
+class Appointments(models.Model):
+    appointment_id = models.AutoField(primary_key=True)
+    doctor = models.ForeignKey('Doctors', models.DO_NOTHING, blank=True, null=True)
+    procedure = models.ForeignKey('Procedures', models.DO_NOTHING, blank=True, null=True)
+    appointment_date = models.DateField(blank=True, null=True)
+    appointment_time = models.TimeField(blank=True, null=True)
 
     class Meta:
         managed = False
-        db_table = 'Bookings'
-    
-    def __str__(self) -> str:
-        return self.booking_id
+        db_table = 'Appointments'
 
 
-class Clients(models.Model):
-    client_id = models.IntegerField(primary_key=True)
-    worker = models.BooleanField(blank=True, null=True)
-    name = models.CharField(blank=True, null=True)
-    birthday = models.DateField(blank=True, null=True)
-    gender = models.CharField(blank=True, null=True)
-    phone = models.CharField(blank=True, null=True)
-    email = models.CharField(blank=True, null=True)
+class Doctors(models.Model):
+    doctor_id = models.AutoField(primary_key=True)
+    first_name = models.CharField(max_length=50, blank=True, null=True)
+    last_name = models.CharField(max_length=50, blank=True, null=True)
+    specialization = models.CharField(max_length=100, blank=True, null=True)
+    phone_number = models.CharField(max_length=20, blank=True, null=True)
+    email = models.CharField(max_length=100, blank=True, null=True)
 
     class Meta:
         managed = False
-        db_table = 'Clients'
-    
-
-    def __str__(self) -> str:
-        return self.name
-
-
-class Comments(models.Model):
-    comment_id = models.IntegerField(primary_key=True)
-    client = models.ForeignKey(Clients, models.DO_NOTHING, blank=True, null=True)
-    description = models.TextField(blank=True, null=True)
-    assessment = models.IntegerField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'Comments'
-    
-
-    def __str__(self) -> str:
-        return self.description
+        db_table = 'Doctors'
 
 
 class Filials(models.Model):
-    filial_id = models.IntegerField(primary_key=True)
-    title = models.CharField(blank=True, null=True)
-    address = models.CharField(blank=True, null=True)
-    phone = models.CharField(blank=True, null=True)
-    email = models.CharField(blank=True, null=True)
+    filial_id = models.AutoField(primary_key=True)
+    filial_name = models.CharField(max_length=100, blank=True, null=True)
+    address = models.CharField(max_length=100, blank=True, null=True)
+    phone_number = models.CharField(max_length=20, blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'Filials'
-    
 
-    def __str__(self) -> str:
-        return self.title
+
+class Meals(models.Model):
+    meal_id = models.AutoField(primary_key=True)
+    meal_type = models.CharField(max_length=50, blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+    price = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'Meals'
+
+
+class Patients(models.Model):
+    patient_id = models.AutoField(primary_key=True)
+    first_name = models.CharField(max_length=50, blank=True, null=True)
+    last_name = models.CharField(max_length=50, blank=True, null=True)
+    birthdate = models.DateField(blank=True, null=True)
+    gender = models.CharField(max_length=10, blank=True, null=True)
+    address = models.CharField(max_length=100, blank=True, null=True)
+    phone_number = models.CharField(max_length=20, blank=True, null=True)
+    email = models.CharField(max_length=100, blank=True, null=True)
+    room = models.ForeignKey('Rooms', models.DO_NOTHING, blank=True, null=True)
+    doctor = models.ForeignKey(Doctors, models.DO_NOTHING, blank=True, null=True)
+    reservation = models.ForeignKey('Reservations', models.DO_NOTHING, blank=True, null=True)
+    appointment = models.ForeignKey(Appointments, models.DO_NOTHING, blank=True, null=True)
+    meal = models.ForeignKey(Meals, models.DO_NOTHING, blank=True, null=True)
+    filial = models.ForeignKey(Filials, models.DO_NOTHING, blank=True, null=True)
+    rate = models.ForeignKey('Rates', models.DO_NOTHING, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'Patients'
+
+
+class Procedures(models.Model):
+    procedure_id = models.AutoField(primary_key=True)
+    procedure_name = models.CharField(max_length=100, blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+    price = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'Procedures'
 
 
 class Rates(models.Model):
-    rate_id = models.IntegerField(primary_key=True)
-    title = models.CharField(blank=True, null=True)
+    rate_id = models.AutoField(primary_key=True)
+    rate_name = models.CharField(max_length=100, blank=True, null=True)
     description = models.TextField(blank=True, null=True)
-    price = models.CharField(blank=True, null=True)
+    price = models.IntegerField(blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'Rates'
-    
 
-    def __str__(self) -> str:
-        return self.title
+
+class Reservations(models.Model):
+    reservation_id = models.AutoField(primary_key=True)
+    check_in_date = models.DateField(blank=True, null=True)
+    check_out_date = models.DateField(blank=True, null=True)
+    total_price = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'Reservations'
 
 
 class Rooms(models.Model):
-    room_id = models.IntegerField(primary_key=True)
-    client = models.ForeignKey(Clients, models.DO_NOTHING, blank=True, null=True)
-    number = models.IntegerField(blank=True, null=True)
-    type_number = models.CharField(blank=True, null=True)
+    room_id = models.AutoField(primary_key=True)
+    room_number = models.IntegerField(blank=True, null=True)
+    room_type = models.CharField(max_length=50, blank=True, null=True)
+    capacity = models.IntegerField(blank=True, null=True)
     busy = models.BooleanField(blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'Rooms'
-    
-
-    def __str__(self) -> str:
-        return self.room_id
-
-
-class Services(models.Model):
-    service_id = models.IntegerField(primary_key=True)
-    title = models.CharField(blank=True, null=True)
-    description = models.TextField(blank=True, null=True)
-    price = models.CharField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'Services'
-    
-
-    def __str__(self) -> str:
-        return self.title
-
-
-class ServicesInBookings(models.Model):
-    id = models.IntegerField(primary_key=True)
-    booking = models.ForeignKey(Bookings, models.DO_NOTHING, blank=True, null=True)
-    service = models.ForeignKey(Services, models.DO_NOTHING, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'Services_in_bookings'
-
-
-class ServicesInRates(models.Model):
-    id = models.IntegerField(primary_key=True)
-    rate = models.ForeignKey(Rates, models.DO_NOTHING, blank=True, null=True)
-    service = models.ForeignKey(Services, models.DO_NOTHING, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'Services_in_rates'
-
-
-class WorkersInServices(models.Model):
-    workers_in_services_id = models.IntegerField(db_column='Workers_in_services_id', primary_key=True)  # Field name made lowercase.
-    cleint = models.ForeignKey(Clients, models.DO_NOTHING, blank=True, null=True)
-    service = models.ForeignKey(Services, models.DO_NOTHING, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'Workers_in_services'
-
