@@ -2,12 +2,6 @@
 
 {% block content %}
 
-<section class="query-rate">
-    <div class="container">
-        <a href="services_in_rates" type="submit" class="btn btn-primary mb-3" id="popular-rate">Узнать какие тарифы имеют услуги</a>
-    </div>
-</section>
-
 <section class="list-model">
     <div class="container">
         <table class="table">
@@ -21,16 +15,19 @@
             {% for model in models %}
             <tr>
                 <td style="text-align: center;">
+                    {{model.appointment_id}}
+                </td>
+                <td style="text-align: center;">
+                    {{model.doctor_id}}
+                </td>
+                <td style="text-align: center;"> 
                     {{model.procedure_id}}
                 </td>
                 <td style="text-align: center;">
-                    {{model.procedure_name}}
+                    {{model.appointment_date}}
                 </td>
-                <td>
-                    {{model.description}}
-                </td>
-                <td>
-                    {{model.price}}
+                <td style="text-align: center;">
+                    {{model.appointment_time}}
                 </td>
             </tr>
             {% endfor %}

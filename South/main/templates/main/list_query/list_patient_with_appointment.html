@@ -1,0 +1,68 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+
+<section class="list-model">
+    <div class="container">
+        <table class="table">
+            <tr>
+            {% for field in name_fields %}
+                <th style="text-align: center;">
+                    {{field}}
+                </th>
+            {% endfor %}
+            </tr>
+            {% for model in models %}
+            <tr>
+                <td style="text-align: center;">
+                    {{model.0}}
+                </td>
+                <td style="text-align: center;">
+                    {{model.1}}
+                </td>
+                <td>
+                    {{model.2}}
+                </td>
+                <td>
+                    {{model.3}}
+                </td>
+                <td>
+                    {{model.4}}
+                </td>
+                <td>
+                    {{model.5}}
+                </td>
+                <td style="text-align: center;">
+                    {{model.6}}
+                </td>
+                <td style="text-align: center;">
+                    {{model.7}}
+                </td>
+                <td style="text-align: center;">
+                    {{model.8}}
+                </td>
+                <td style="text-align: center;">
+                    {{model.9}}
+                </td>
+                <td style="text-align: center;">
+                    {{model.10}}
+                </td>
+                <td style="text-align: center;">
+                    {{model.11}}
+                </td>
+                <td style="text-align: center;">
+                    {{model.12}}
+                </td>
+                <td style="text-align: center;">
+                    {{model.13}}
+                </td>
+                <td style="text-align: center;">
+                    {{model.14}}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</section>
+
+{% endblock%}

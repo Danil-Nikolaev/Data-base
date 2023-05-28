@@ -13,17 +13,33 @@
                 <li class="nav-item">
                   <a class="nav-link nav-active south-link" aria-current="page" href="/">Главная</a>
                 </li>
-                <li class="nav-item">
-                  <a class="nav-link south-link" href="/services">Услуги</a>
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Списки
+                  </a>
+                  <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                    <a class="dropdown-item" href="/services">Процедуры</a>
+                    <a class="dropdown-item" href="/rooms">Номера</a>
+                    <a class="dropdown-item" href="/rates">Тарифы</a>
+                    <a class="dropdown-item" href="/filials">филиалы</a>
+                    <a class="dropdown-item" href="/reservations">Бронирования</a>
+                    <a class="dropdown-item" href="/appointments">Бронирования процедур</a>
+                    <a class="dropdown-item" href="/doctors">Врачи</a>
+                  </div>
                 </li>
-                <li class="nav-item">
-                  <a class="nav-link south-link" href="/rooms">Номера</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link south-link" href="/rates">Тарифы</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link south-link" href="/filials">филиалы</a>
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Запросы
+                  </a>
+                  <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                    <a class="dropdown-item" href="/PatientsWithAppointment">Пациенты с процедурами</a>
+                    <a class="dropdown-item" href="/ProcedureHighPrice">Дорогие процедуры</a>
+                    <a class="dropdown-item" href="/DoctorsHigh">Врачи с дорогими процедурами</a>
+                    <a class="dropdown-item" href="/DoctorsWithAppointment">Врачи с назначенными пациентами</a>
+                    <a class="dropdown-item" href="/PatientsWithHighPriceProcedure">Пациенты с дорогими процедурами</a>
+                    <a class="dropdown-item" href="/ProcedureWithoutAppointment">Список процедур, которые не использовались</a>
+                    <a class="dropdown-item" href="/PatientsLowCapacity">пациенты с маленькими номерами</a>
+                  </div>
                 </li>
               </ul>
           </div>

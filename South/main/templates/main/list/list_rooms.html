@@ -26,16 +26,16 @@
                     {{model.room_id}}
                 </td>
                 <td style="text-align: center;">
-                    {{model.number}}
+                    {{model.room_number}}
                 </td>
-                <td>
-                    {{model.type_number}}
+                <td style="text-align: center;">
+                    {{model.room_type}}
                 </td>
-                <td>
+                <td style="text-align: center;">
+                    {{model.capacity}}
+                </td>
+                <td style="text-align: center;">
                     {{model.busy}}
-                </td>
-                <td>
-                    {{model.client}}
                 </td>
             </tr>
             {% endfor %}
